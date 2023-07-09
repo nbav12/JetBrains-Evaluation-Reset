@@ -58,22 +58,26 @@ def find_products_dirs(product_name: str) -> list:
     jetbrains_dir = os.path.join(APP_DATA_PATH, 'Jetbrains')
 
     if os.path.exists(jetbrains_dir):
-        for directory in os.listdir(jetbrains_dir):
-            # Ignore PyCharm Commercial Edition (CE)
-            if directory.lower().startswith('pycharmce'):
-                continue
-            elif directory.lower().startswith(product_name):
-                products_dirs.append(os.path.join(jetbrains_dir, directory))
+        for root, dirs, files in os.walk(jetbrains_dir):
+            for directory in dirs:
+                # Ignore PyCharm Commercial Edition (CE)
+                if directory.lower().startswith('pycharmce'):
+                    continue
+                elif directory.lower().startswith(product_name):
+                    products_dirs.append(os.path.join(jetbrains_dir, directory))
+            break  # Disable recursive of os.walk()
 
     # Trying get with 2019.3.x and below versions
-    for directory in os.listdir(HOME_PATH):
-        # Ignore PyCharm Commercial Edition (CE)
-        if 'pycharmce' in directory.lower():
-            continue
-        elif product_name in directory.lower():
-            product_dir = os.path.join(HOME_PATH, directory)
-            if 'config' in os.listdir(product_dir):
-                products_dirs.append(os.path.join(product_dir, 'config'))
+    for root, dirs, files in os.walk(HOME_PATH):
+        for directory in dirs:
+            # Ignore PyCharm Commercial Edition (CE)
+            if 'pycharmce' in directory.lower():
+                continue
+            elif product_name in directory.lower():
+                product_dir = os.path.join(HOME_PATH, directory)
+                if 'config' in os.listdir(product_dir):
+                    products_dirs.append(os.path.join(product_dir, 'config'))
+        break
 
     return products_dirs
 
