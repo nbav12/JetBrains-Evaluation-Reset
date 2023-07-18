@@ -32,8 +32,9 @@ def is_valid_choose(choose: str, min_value: int, max_value: int) -> bool:
 
 def get_product_name() -> str:
     products_options = {
-        1: {'value': 'webstorm', 'desc': 'Webstorm'},
-        2: {'value': 'pycharm', 'desc': 'PyCharm'}
+        1: {'value': 'webstorm', 'desc': 'WebStorm'},
+        2: {'value': 'pycharm', 'desc': 'PyCharm'},
+        3: {'value': 'clion', 'desc': 'CLion'}
     }
     print('# Choose Product')
     for key, val in products_options.items():
@@ -51,8 +52,8 @@ def close() -> NoReturn:
     sys.exit(0)
 
 
-def find_products_dirs(product_name: str) -> list:
-    products_dirs = []
+def find_product_dirs(product_name: str) -> list:
+    product_dirs = []
 
     # Trying get with 2020.1 and above versions
     jetbrains_dir = os.path.join(APP_DATA_PATH, 'Jetbrains')
@@ -64,7 +65,7 @@ def find_products_dirs(product_name: str) -> list:
                 if directory.lower().startswith('pycharmce'):
                     continue
                 elif directory.lower().startswith(product_name):
-                    products_dirs.append(os.path.join(jetbrains_dir, directory))
+                    product_dirs.append(os.path.join(jetbrains_dir, directory))
             break  # Disable recursive of os.walk()
 
     # Trying get with 2019.3.x and below versions
@@ -76,10 +77,10 @@ def find_products_dirs(product_name: str) -> list:
             elif product_name in directory.lower():
                 product_dir = os.path.join(HOME_PATH, directory)
                 if 'config' in os.listdir(product_dir):
-                    products_dirs.append(os.path.join(product_dir, 'config'))
+                    product_dirs.append(os.path.join(product_dir, 'config'))
         break
 
-    return products_dirs
+    return product_dirs
 
 
 def choose_product_dir_manual() -> str:
@@ -213,7 +214,7 @@ def handle_reg(product_name):
 
 def main():
     product_name = get_product_name()
-    product_dirs = find_products_dirs(product_name)
+    product_dirs = find_product_dirs(product_name)
 
     if not product_dirs:
         print(f'{INFO}[!] The {product_name} config dir can not be found. Please choose it manually{END}')
